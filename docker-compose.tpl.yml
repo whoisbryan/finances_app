@@ -1,8 +1,12 @@
+version: '3.8'
+
 services:
   backend:
     image: brxvn/finanzas-backend:${TAG}
     expose:
       - "8000"
+    ports:
+      - "8000:8000"  # ← Esto permite que NGINX del host pueda conectarse
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
       SECRET_KEY: my_super_secret_key
@@ -16,6 +20,8 @@ services:
     image: brxvn/finanzas-frontend:${TAG}
     expose:
       - "80"
+    ports:
+      - "8080:80"  # ← Esto permite que NGINX del host pueda conectarse
     networks:
       - app_net
 
