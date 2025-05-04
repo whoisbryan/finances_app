@@ -1,0 +1,61 @@
+name: CI/CD Finanzas App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Clonar repo
+        uses: actions/checkout@v3
+
+      - name: 🔧 Obtener short SHA
+        id: vars
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_ENV
+
+      - name: 🐳 Login a DockerHub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: 🐍 Build backend
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-backend:$SHORT_SHA ./backend
+
+      - name: ⚛️ Build frontend
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-frontend:$SHORT_SHA ./frontend
+
+      - name: 🚀 Push imágenes
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-backend:$SHORT_SHA
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-frontend:$SHORT_SHA
+
+      - name: 🧩 Copiar archivos al servidor
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.tpl.yml"
+          target: "~/deploy-finanzas/"
+
+      - name: 🖥️ SSH y desplegar
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            export TAG=${SHORT_SHA}
+            export DB_USER=${{ secrets.DB_USER }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export DB_NAME=${{ secrets.DB_NAME }}
+
+            cd ~/deploy-finanzas
+
+            envsubst < docker-compose.tpl.yml > docker-compose.yml
+
+            docker compose pull
+            docker compose down
+            docker compose up -d
