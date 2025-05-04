@@ -31,15 +31,6 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-backend:$SHORT_SHA
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/finanzas-frontend:$SHORT_SHA
 
-      - name: 🧩 Copiar archivos al servidor
-        uses: appleboy/scp-action@v0.1.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.tpl.yml"
-          target: "~/deploy-finanzas/"
-
       - name: 🖥️ Build & Deploy
         env:
             PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -48,6 +39,7 @@ jobs:
       
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          scp -i private_key docker-compose.tpl.yml ~/deploy-finanzas/
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
             export TAG=${SHORT_SHA}
