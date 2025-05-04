@@ -39,7 +39,7 @@ jobs:
       
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          scp -o StrictHostKeyChecking=no -i private_key docker-compose.tpl.yml ${USER_NAME}@${HOSTNAME}:/~/deploy-finanzas/
+          scp -o StrictHostKeyChecking=no -i private_key docker-compose.tpl.yml ${USER_NAME}@${HOSTNAME}:/$HOME/deploy-finanzas/
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
             export TAG=${SHORT_SHA}
@@ -47,7 +47,7 @@ jobs:
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export DB_NAME=${{ secrets.DB_NAME }}
 
-            cd ~/deploy-finanzas
+            cd $HOME/deploy-finanzas
 
             envsubst < docker-compose.tpl.yml > docker-compose.yml
 
