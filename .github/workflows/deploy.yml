@@ -48,6 +48,9 @@ jobs:
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export DB_NAME=${{ secrets.DB_NAME }}
 
+            cat "tag: $TAG"
+            cat "db user: $DB_USER"
+
             cd $HOME/deploy-finanzas
 
             envsubst < docker-compose.tpl.yml > docker-compose.yml
