@@ -2,28 +2,43 @@ import { useState } from "react";
 import { FaPiggyBank } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/login";
+import { useAuth } from "../context/AuthContext";
 
 
-function Login({ theme, setTheme }) { 
-    const [email, setEmail] = useState("");
+
+function Login({ theme, setTheme }) {
+    const { login } = useAuth();
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
 
     const navigate = useNavigate();
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setError("");
 
-        // Simulamos una petición de login (2 segundos)
-        setTimeout(() => {
-            console.log("Email:", email);
-            console.log("Password:", password);
+        try {
+            const data = await loginUser({
+                username,
+                password,
+              });
+              
+              login(data); // guardamos en contexto + localStorage
+              navigate("/home");
+              
+        } catch (err) {
+            setError(err.message || "Error en login");
+        } finally {
             setLoading(false);
-            navigate("/home"); // 🔥 Redirige al Home
-        }, 1500);
+        }
     };
+
 
 
     return (
@@ -57,14 +72,14 @@ function Login({ theme, setTheme }) {
 
                     <div className="mb-5">
                         <label className="block text-neutral-200 text-sm font-semibold mb-2">
-                            Email
+                            Username
                         </label>
                         <input
-                            type="email"
+                            type="text"
                             className="w-full px-4 py-3 rounded-lg bg-neutral-700 mt-2 border border-neutral-600 focus:border-indigo-500 focus:bg-neutral-600 focus:outline-none text-neutral-100 transition duration-200"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="yourname@example.com"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="jonhdoe"
                             required
                         />
                     </div>
@@ -94,6 +109,8 @@ function Login({ theme, setTheme }) {
                             "Log In"
                         )}
                     </button>
+                    {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
+
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-neutral-400">

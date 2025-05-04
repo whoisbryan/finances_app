@@ -1,8 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./routes/PrivateRoute";
+
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
-import { useState } from "react";
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -11,21 +14,30 @@ function App() {
   });
 
   return (
-    <Router>
-      <Routes>
-        {/* Página de login */}
-        <Route path="/login" element={<Login theme={theme} setTheme={setTheme} />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Página de login */}
+          <Route path="/login" element={<Login theme={theme} setTheme={setTheme} />} />
 
-        {/* Página de registro */}
-        <Route path="/register" element={<Register theme={theme} />} />
+          {/* Página de registro */}
+          <Route path="/register" element={<Register theme={theme} />} />
 
-        {/* Página principal (dashboard) */}
-        <Route path="/home" element={<Home theme={theme} />} />
+          {/* Página principal protegida */}
+          <Route
+            path="/home"
+            element={
+              <PrivateRoute>
+                <Home theme={theme} />
+              </PrivateRoute>
+            }
+          />
 
-        {/* Redirección automática */}
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    </Router>
+          {/* Redirección por defecto */}
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

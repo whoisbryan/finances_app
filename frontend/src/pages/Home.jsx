@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import {
   FaWallet,
   FaCreditCard,
@@ -15,6 +16,7 @@ import {
 import Card from "../components/Card";
 
 function Home() {
+  const { user } = useAuth();
   const userName = "Bryan";
 
   const [theme, setTheme] = useState(() => {
@@ -49,7 +51,7 @@ function Home() {
 
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome back, {userName}!</h1>
+        <h1 className="text-3xl font-bold">Welcome back, {user?.username}!</h1>
 
         <div className="flex items-center space-x-6">
           {/* Settings */}

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../services/register";
+
+
 
 function Register({ theme }) {
   const navigate = useNavigate();
@@ -9,17 +12,43 @@ function Register({ theme }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match");
+      setLoading(false);
       return;
     }
-    console.log("Registering:", { name, email, password });
-    // Aquí luego conectaremos con el backend
-    navigate("/home");
+
+    try {
+      const data = await registerUser({
+        username: name,
+        email,
+        password,
+      });
+
+      setSuccess(`User created!`);
+      setLoading(false);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (err) {
+      setError(err.message || "Registration error");
+      setLoading(false);
+    }
   };
+
+
 
   return (
     <div className={`flex min-h-screen w-full overflow-hidden ${theme === "dark" ? "bg-neutral-900 text-neutral-100" : "bg-gray-50 text-gray-800"}`}>
@@ -100,10 +129,51 @@ function Register({ theme }) {
           {/* Botón */}
           <button
             type="submit"
-            className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300"
+            className={`w-full py-3 rounded-lg font-semibold transition duration-300 flex items-center justify-center ${loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 text-white"
+              }`}
+            disabled={loading}
           >
-            Sign Up
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+            ) : (
+              "Sign Up"
+            )}
           </button>
+
+          {error && (
+            <div className="mt-4 w-full bg-red-500/10 text-red-400 border border-red-400 rounded-lg px-4 py-3 text-sm font-medium animate-fade-in">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="mt-4 w-full bg-green-500/10 text-green-400 border border-green-400 rounded-lg px-4 py-3 text-sm font-medium animate-fade-in">
+              {success}
+            </div>
+          )}
+
+
 
           {/* Link para volver a login */}
           <div className="mt-6 text-center">
