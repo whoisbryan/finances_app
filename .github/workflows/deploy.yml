@@ -35,7 +35,7 @@ jobs:
         env:
             PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             HOSTNAME: ${{ secrets.HOST }}
-            USER_NAME: ${{ variables.USER }}
+            USER_NAME: ${{ vars.USER }}
       
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
