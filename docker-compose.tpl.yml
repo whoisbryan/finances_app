@@ -1,19 +1,23 @@
 services:
   backend:
     image: brxvn/finanzas-backend:${TAG}
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
       SECRET_KEY: my_super_secret_key
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
     depends_on:
       - db
+    networks:
+      - app_net
 
   frontend:
     image: brxvn/finanzas-frontend:${TAG}
-    ports:
-      - "80:80"
+    expose:
+      - "80"
+    networks:
+      - app_net
 
   db:
     image: postgres:15
@@ -24,6 +28,13 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - app_net
 
 volumes:
   pgdata:
+
+networks:
+  app_net:
+    name: finanzas_net
+    driver: bridge
