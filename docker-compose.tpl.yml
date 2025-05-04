@@ -1,17 +1,17 @@
 services:
   backend:
-    image: brxvn/finanzas-backend:$TAG
+    image: brxvn/finanzas-backend:${TAG}
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL: postgresql+asyncpg://$DB_USER:$DB_PASSWORD@db/$DB_NAME
+      - DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
       - SECRET_KEY: my_super_secret_key
       - ACCESS_TOKEN_EXPIRE_MINUTES: 30
     depends_on:
       - db
 
   frontend:
-    image: brxvn/finanzas-frontend:$TAG
+    image: brxvn/finanzas-frontend:${TAG}
     ports:
       - "3000:3000"
 
@@ -19,9 +19,9 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: $DB_USER
-      POSTGRES_PASSWORD: $DB_PASSWORD
-      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
