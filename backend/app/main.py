@@ -12,10 +12,14 @@ async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+origins = [
+    "http://localhost:3000",
+    "http://44.211.127.136:3000",  # 🟢 tu IP pública
+]
 # Permitir peticiones del frontend (React)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # o ["*"] en desarrollo
+    allow_origins=origins,  # o ["*"] en desarrollo
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
