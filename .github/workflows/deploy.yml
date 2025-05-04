@@ -39,7 +39,8 @@ jobs:
       
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          scp -o StrictHostKeyChecking=no -i private_key docker-compose.tpl.yml ${USER_NAME}@${HOSTNAME}:$HOME/deploy-finanzas/
+          ls
+          scp -o StrictHostKeyChecking=no -i private_key docker-compose.tpl.yml ${USER_NAME}@${HOSTNAME}:/home/${USER_NAME}/deploy-finanzas/
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
             export TAG=${SHORT_SHA}
