@@ -48,6 +48,7 @@ jobs:
             export DB_NAME='${{ secrets.DB_NAME }}';
             cd /home/${USER_NAME}/deploy-finanzas;
             envsubst < docker-compose.tpl.yml > docker-compose.yml;
+            docker compose down
             docker compose pull;
             docker compose up -d
           "
