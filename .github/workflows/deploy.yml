@@ -40,13 +40,16 @@ jobs:
           source: "docker-compose.tpl.yml"
           target: "~/deploy-finanzas/"
 
-      - name: 🖥️ SSH y desplegar
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+      - name: 🖥️ Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.HOST }}
+            USER_NAME: ${{secrets.USER }}
+      
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
             export TAG=${SHORT_SHA}
             export DB_USER=${{ secrets.DB_USER }}
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
@@ -59,3 +62,4 @@ jobs:
             docker compose pull
             docker compose down
             docker compose up -d
+          '
