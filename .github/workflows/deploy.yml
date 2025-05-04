@@ -46,6 +46,7 @@ jobs:
             export DB_USER='${{ secrets.DB_USER }}';
             export DB_PASSWORD='${{ secrets.DB_PASSWORD }}';
             export DB_NAME='${{ secrets.DB_NAME }}';
+            export VITE_API_URL='${{ vars.VITE_API_URL }}'
             cd /home/${USER_NAME}/deploy-finanzas;
             envsubst < docker-compose.tpl.yml > docker-compose.yml;
             docker compose down

@@ -13,10 +13,8 @@ async def startup():
         await conn.run_sync(Base.metadata.create_all)
 
 origins = [
-    "http://localhost:3000",
-    "http://44.211.127.136",  # 🟢 tu IP pública
-    "https://finanzas.brxvn.xyz",
-    "http://finanzas.brxvn.xyz"
+    "http://localhost:3000", # 🟢 tu IP pública
+    "https://finanzas.brxvn.xyz"
 ]
 # Permitir peticiones del frontend (React)
 app.add_middleware(
