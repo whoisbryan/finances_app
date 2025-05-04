@@ -14,7 +14,7 @@ async def startup():
 
 origins = [
     "http://localhost:3000",
-    "http://44.211.127.136:3000",  # 🟢 tu IP pública
+    "http://44.211.127.136",  # 🟢 tu IP pública
 ]
 # Permitir peticiones del frontend (React)
 app.add_middleware(
