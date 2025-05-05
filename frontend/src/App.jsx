@@ -23,6 +23,9 @@ function App() {
           {/* Página de registro */}
           <Route path="/register" element={<Register theme={theme} />} />
 
+          {/* Página de registro */}
+          {/* <Route path="/home" element={<Home theme={theme} />} /> */}
+
           {/* Página principal protegida */}
           <Route
             path="/home"
