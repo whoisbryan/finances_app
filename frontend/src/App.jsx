@@ -24,9 +24,9 @@ function App() {
           <Route path="/register" element={<Register theme={theme} />} />
 
           {/* Página de registro */}
-          <Route path="/home" element={<Home theme={theme} />} />
+          {/* <Route path="/home" element={<Home theme={theme} />} /> */}
 
-          {/* Página principal protegida
+          {/* Página principal protegida */}
           <Route
             path="/home"
             element={
@@ -34,7 +34,7 @@ function App() {
                 <Home theme={theme} />
               </PrivateRoute>
             }
-          /> */}
+          />
 
           {/* Redirección por defecto */}
           <Route path="*" element={<Navigate to="/login" />} />
